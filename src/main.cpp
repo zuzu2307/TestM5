@@ -193,26 +193,19 @@ void setup() {
   M5.begin();
 
   // Lcd display
-  M5.Lcd.fillScreen(WHITE);
-  delay(500);
-  M5.Lcd.fillScreen(RED);
-  delay(500);
-  M5.Lcd.fillScreen(GREEN);
-  delay(500);
-  M5.Lcd.fillScreen(BLUE);
-  delay(500);
-  M5.Lcd.fillScreen(BLACK);
-  delay(500);
+  //M5.Lcd.fillScreen(WHITE);
+  
 
   // text print
-  M5.Lcd.fillScreen(BLACK);
+  M5.Lcd.fillScreen(BLUE);
   M5.Lcd.setCursor(10, 10);
   M5.Lcd.setTextColor(WHITE);
-  M5.Lcd.setTextSize(1);
+  M5.Lcd.setTextSize(3.9);
   M5.Lcd.printf("Display Test!");
 
+  
   // draw graphic
-  delay(1000);
+  /*delay(1000);
   M5.Lcd.drawRect(100, 100, 50, 50, BLUE);
   delay(1000);
   M5.Lcd.fillRect(100, 100, 50, 50, BLUE);
@@ -223,15 +216,34 @@ void setup() {
   delay(1000);
   M5.Lcd.drawTriangle(30, 30, 180, 100, 80, 150, YELLOW);
   delay(1000);
-  M5.Lcd.fillTriangle(30, 30, 180, 100, 80, 150, YELLOW);
+  M5.Lcd.fillTriangle(30, 30, 180, 100, 80, 150, YELLOW);*/
 
 }
 
 // the loop routine runs over and over again forever
+int scstate = 0;
 void loop(){
 
   //rand draw 
-  M5.Lcd.fillTriangle(random(M5.Lcd.width()-1), random(M5.Lcd.height()-1), random(M5.Lcd.width()-1), random(M5.Lcd.height()-1), random(M5.Lcd.width()-1), random(M5.Lcd.height()-1), random(0xfffe));
+ // M5.Lcd.fillTriangle(random(M5.Lcd.width()-1), random(M5.Lcd.height()-1), random(M5.Lcd.width()-1), random(M5.Lcd.height()-1), random(M5.Lcd.width()-1), random(M5.Lcd.height()-1), random(0xfffe));
+if(M5.BtnA.wasPressed())
+  {
+    if(scstate == 0)
+    {
+      scstate++;
+      M5.Lcd.fillScreen(BLACK);
+    }
+    else
+    {
+      scstate = 0;
+      M5.Lcd.fillScreen(BLUE);
+      M5.Lcd.setCursor(10, 10);
+      M5.Lcd.setTextColor(WHITE);
+      M5.Lcd.setTextSize(3.9);
+      M5.Lcd.printf("Display Test!");
+    }
+    
+  }
 
   M5.update();
 }
