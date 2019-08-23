@@ -1,7 +1,8 @@
-/*#include <Arduino.h>      //? Main Arduino Lib Framework
+#include <Arduino.h>      //? Main Arduino Lib Framework
 #include <WiFi.h>         //? Connect WiFi
 #include <PubSubClient.h> //? Client MQTT
 #include <ArduinoJson.h>
+#include <M5Stack.h>
 
 //* Prototype Function
 void callback(char *topic, byte *payload, unsigned int length);
@@ -19,7 +20,7 @@ void wifiSetup();
 #define MQTT_SERVER "soldier.cloudmqtt.com" //?Server URLS
 #define MQTT_PORT 16880                     //? Server Port
 #define MQTT_USERNAME "zuzu2307"               //? MQTT UserName
-#define MQTT_PASSWORD "police1234"            //? MQTT Password
+#define MQTT_PASSWORD "741852963"            //? MQTT Password
 #define MQTT_NAME "ESP32_1"                 //?Topic Name
 
 //* Params
@@ -27,8 +28,7 @@ void wifiSetup();
 unsigned long long previousMillis_WiFi = 0,
                    previousMillis_MQTT = 0,
                    previousMillis_PUB = 0;
-const char *title, *status;
-int duration;
+const char *title, *status, *label;
 //* SUB Topic
 #define MQTT_SUB_TEST "/NODE_RED/Test" //? Test MQTT Only
 #define MQTT_SUB_JSON "/NODE_RED/JSON" //? JSON Format
@@ -39,12 +39,15 @@ PubSubClient mqtt(client); //? Create Mqtt over WiFiClient
 void setup()
 {
   // put your setup code here, to run once:
+  M5.begin();
+  M5.Lcd.fillScreen(WHITE);
   Serial.begin(115200);
   Serial.println();
   wifiSetup();
   mqttSetup();
+  
 }
-
+int num=1;
 void loop()
 {
   // put your main code here, to run repeatedly:
@@ -55,8 +58,22 @@ void loop()
   else
   {
     mqtt.loop();
-   // pubJSON();
+    if(M5.BtnA.wasPressed())
+  {
+    pubJSON();
+    M5.lcd.clear();
+    M5.Lcd.fillScreen(BLACK);
+    M5.Lcd.setCursor(50, 50);
+    M5.Lcd.setTextColor(WHITE);
+    M5.Lcd.setTextSize(3);
+    M5.Lcd.printf("Send");
+    M5.Lcd.printf("%d",num);
+    num++;
   }
+  M5.update();
+  }
+  
+  
 }
 
 void wifiSetup()
@@ -109,11 +126,11 @@ void callback(char *topic, byte *payload, unsigned int length)
     deserializeJson(doc, payload, length); //? deserialize JSON
 
     title = doc["title"];       //? Store key title to tittle
-    duration = doc["duration"]; //? Store key duration to duration
-    status = doc["status"];     //? Store key status to status
+    label = doc["label"]; //? Store key duration to duration
+    status = doc["status_"];     //? Store key status to status
 
     Serial.println("title : " + String(title) + " | " +
-                   "durations : " + String(duration) + " | " +
+                   "label : " + String(label) + " | " +
                    "status : " + String(status)); //?Print Output
 
     Serial.println("--- END JSON Process ---");
@@ -173,18 +190,19 @@ void pubJSON()
     char buffer[512];
 
     doc["title"] = "test1";
-    doc["duration"] = 10;
+    doc["label"] = "Homework";
     doc["status"] = "Todo";
 
+  
     serializeJson(doc, buffer);
 
-    mqtt.publish(MQTT_PUB_JSON, buffer);
+    mqtt.publish(MQTT_SUB_JSON, buffer);
   }
-}*/
+}
 
 ///////////////////////////////////////////////////////////////////////////////////
 
-#include <M5Stack.h>
+/*
 
 // the setup routine runs once when M5Stack starts up
 void setup() {
@@ -205,7 +223,7 @@ void setup() {
 
   
   // draw graphic
-  /*delay(1000);
+  delay(1000);
   M5.Lcd.drawRect(100, 100, 50, 50, BLUE);
   delay(1000);
   M5.Lcd.fillRect(100, 100, 50, 50, BLUE);
@@ -216,7 +234,7 @@ void setup() {
   delay(1000);
   M5.Lcd.drawTriangle(30, 30, 180, 100, 80, 150, YELLOW);
   delay(1000);
-  M5.Lcd.fillTriangle(30, 30, 180, 100, 80, 150, YELLOW);*/
+  M5.Lcd.fillTriangle(30, 30, 180, 100, 80, 150, YELLOW);
 
 }
 
@@ -231,7 +249,7 @@ if(M5.BtnA.wasPressed())
     if(scstate == 0)
     {
       scstate++;
-      M5.Lcd.fillScreen(BLACK);
+      
     }
     else
     {
@@ -246,5 +264,5 @@ if(M5.BtnA.wasPressed())
   }
 
   M5.update();
-}
+}*/
 
